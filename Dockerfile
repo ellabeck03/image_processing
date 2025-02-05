@@ -168,64 +168,64 @@ RUN if [ "$build_double_down" = "ON" ] ; \
         make -j"$compile_cores" install ; \
     fi
 
-# Clone and install MOAB
-RUN mkdir MOAB && \
-    cd MOAB && \
-    # newer versions of moab (5.4.0, 5.4.1) don't produce an importable pymoab package!
-    # TODO try moab 5.5.0
-    git clone  --single-branch --branch 5.3.1 --depth 1 https://bitbucket.org/fathomteam/moab.git && \
-    mkdir build && \
-    cd build && \
-    cmake ../moab -DENABLE_HDF5=ON \
-                  -DENABLE_NETCDF=ON \
-                  -DENABLE_FORTRAN=OFF \
-                  -DENABLE_BLASLAPACK=OFF \
-                  -DBUILD_SHARED_LIBS=ON \
-                  -DENABLE_PYMOAB=ON \
-                  -DCMAKE_INSTALL_PREFIX=/MOAB && \
-    mkdir -p MOAB/lib/pymoab/lib/python3.11/site-packages && \
-    PYTHONPATH=/MOAB/lib/pymoab/lib/python3.11/site-packages:${PYTHONPATH} make -j && \
-    PYTHONPATH=/MOAB/lib/pymoab/lib/python3.11/site-packages:${PYTHONPATH} make install -j
+# Clone and install MOAB^
+#RUN mkdir MOAB && \
+    #cd MOAB && \
+    ## newer versions of moab (5.4.0, 5.4.1) don't produce an importable pymoab package!
+    ## TODO try moab 5.5.0
+    #git clone  --single-branch --branch 5.3.1 --depth 1 https://bitbucket.org/fathomteam/moab.git && \
+    #mkdir build && \
+    #cd build && \
+    #cmake ../moab -DENABLE_HDF5=ON \
+                  #-DENABLE_NETCDF=ON \
+                  #-DENABLE_FORTRAN=OFF \
+                  #-DENABLE_BLASLAPACK=OFF \
+                  #-DBUILD_SHARED_LIBS=ON \
+                  #-DENABLE_PYMOAB=ON \
+                  #-DCMAKE_INSTALL_PREFIX=/MOAB && \
+    #mkdir -p MOAB/lib/pymoab/lib/python3.11/site-packages && \
+    #PYTHONPATH=/MOAB/lib/pymoab/lib/python3.11/site-packages:${PYTHONPATH} make -j && \
+    #PYTHONPATH=/MOAB/lib/pymoab/lib/python3.11/site-packages:${PYTHONPATH} make install -j
 
-ENV PYTHONPATH="/MOAB/lib/python3.11/site-packages/pymoab-5.3.1-py3.11-linux-x86_64.egg/"
+#ENV PYTHONPATH="/MOAB/lib/python3.11/site-packages/pymoab-5.3.1-py3.11-linux-x86_64.egg/"
 
-RUN python -c "import pymoab"
+#RUN python -c "import pymoab"
 
-ENV PATH=$PATH:/MOAB/bin
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/MOAB/lib
+#ENV PATH=$PATH:/MOAB/bin
+#ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/MOAB/lib
 
 # Clone and install Double-Down
-RUN if [ "$build_double_down" = "ON" ] ; \
-        then git clone --shallow-submodules --single-branch --branch v1.0.0 --depth 1 https://github.com/pshriwise/double-down.git && \
-        cd double-down ; \
-        mkdir build ; \
-        cd build ; \
-        cmake .. -DMOAB_DIR=/MOAB \
-                 -DCMAKE_INSTALL_PREFIX=.. \
-                 -DEMBREE_DIR=/embree ; \
-        make -j"$compile_cores" ; \
-        make -j"$compile_cores" install ; \
-        rm -rf /double-down/build /double-down/double-down ; \
-    fi
+#RUN if [ "$build_double_down" = "ON" ] ; \
+        #then git clone --shallow-submodules --single-branch --branch v1.0.0 --depth 1 https://github.com/#pshriwise/double-down.git && \
+        #cd double-down ; \
+        #mkdir build ; \
+        #cd build ; \
+        #cmake .. -DMOAB_DIR=/MOAB \
+                 #-DCMAKE_INSTALL_PREFIX=.. \
+                 #-DEMBREE_DIR=/embree ; \
+        #make -j"$compile_cores" ; \
+        #make -j"$compile_cores" install ; \
+        #rm -rf /double-down/build /double-down/double-down ; \
+    #fi
 
 # DAGMC version develop install from source
-RUN mkdir DAGMC && \
-    cd DAGMC && \
-    git clone --single-branch --branch v3.2.2 --depth 1 https://github.com/svalinn/DAGMC.git && \
-    mkdir build && \
-    cd build && \
-    cmake ../DAGMC -DBUILD_TALLY=ON \
-                   -DMOAB_DIR=/MOAB \
-                   -DDOUBLE_DOWN=${build_double_down} \
-                   -DBUILD_STATIC_EXE=OFF \
-                   -DBUILD_STATIC_LIBS=OFF \
-                   -DCMAKE_INSTALL_PREFIX=/DAGMC/ \
-                   -DDOUBLE_DOWN_DIR=/double-down && \
-    make -j"$compile_cores" install && \
-    rm -rf /DAGMC/DAGMC /DAGMC/build
+#RUN mkdir DAGMC && \
+    #cd DAGMC && \
+    #git clone --single-branch --branch v3.2.2 --depth 1 https://github.com/svalinn/DAGMC.git && \
+    #mkdir build && \
+    #cd build && \
+    #cmake ../DAGMC -DBUILD_TALLY=ON \
+                   #-DMOAB_DIR=/MOAB \
+                   #-DDOUBLE_DOWN=${build_double_down} \
+                   #-DBUILD_STATIC_EXE=OFF \
+                   #-DBUILD_STATIC_LIBS=OFF \
+                   #-DCMAKE_INSTALL_PREFIX=/DAGMC/ \
+                   #-DDOUBLE_DOWN_DIR=/double-down && \
+    #make -j"$compile_cores" install && \
+    #rm -rf /DAGMC/DAGMC /DAGMC/build
 
-ENV PATH=$PATH:/DAGMC/bin
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/DAGMC/lib
+#ENV PATH=$PATH:/DAGMC/bin
+#ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/DAGMC/lib
 
 # installs OpenMc from source
 # switch back to tagged version when 0.13.3 is released as develop depletion is used
@@ -234,7 +234,7 @@ RUN git clone --single-branch --branch develop --depth 1 https://github.com/open
     cd openmc && \
     mkdir build && \
     cd build && \
-    cmake -DOPENMC_USE_DAGMC=ON \
+    cmake -DOPENMC_USE_DAGMC=OFF \
           -DDAGMC_ROOT=/DAGMC \
           -DHDF5_PREFER_PARALLEL=OFF .. && \
     make -j"$compile_cores" && \
@@ -259,3 +259,4 @@ ENV PORT 8888
 
 # could switch to --ip='*'
 CMD ["jupyter", "lab", "--port=8888", "--ip=0.0.0.0", "--allow-root"]
+
